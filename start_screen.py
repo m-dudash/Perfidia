@@ -5,13 +5,12 @@ class StartScreen:
         self.display_surface = display_surface
         self.clock = pg.time.Clock()
         self.running = True
-        self.gif_frames = self.load_gif_frames("assets/perfidia_screen")
+        self.frames = self.load_frames("assets/perfidia_screen")
         self.frame_index = 0
         self.frame_delay = 70  # миллисекунды между кадрами
         self.last_frame_time = pg.time.get_ticks()
 
-    def load_gif_frames(self, path):
-        """Загрузка кадров GIF как отдельных изображений."""
+    def load_frames(self, path):
         frames = []
         for i in range(1, 6): 
             frame_path = f"{path}/frame_{i:01}.png"
@@ -30,15 +29,14 @@ class StartScreen:
                     self.running = False
                     return True
 
-            # Обновление кадра GIF
             current_time = pg.time.get_ticks()
             if current_time - self.last_frame_time >= self.frame_delay:
-                self.frame_index = (self.frame_index + 1) % len(self.gif_frames)
+                self.frame_index = (self.frame_index + 1) % len(self.frames)
                 self.last_frame_time = current_time
 
             # Отрисовка текущего кадра
             self.display_surface.fill((0, 0, 0))
-            self.display_surface.blit(self.gif_frames[self.frame_index], (0, 0))
+            self.display_surface.blit(self.frames[self.frame_index], (0, 0))
             pg.display.update()
             self.clock.tick(60)
 

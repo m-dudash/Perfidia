@@ -1,5 +1,9 @@
 import pygame as pg
+from hell_screen import HellScreen
+from level import Level
 from start_screen import StartScreen
+
+
 class Game:
     def __init__(self):
         pg.init()
@@ -10,19 +14,50 @@ class Game:
 
     def run(self):
         """Основной игровой цикл."""
-        while self.running:
-            for event in pg.event.get():
-                if event.type == pg.QUIT:
+        # Отображение стартового экрана
+        start_screen = StartScreen(self.display_surface)
+        if not start_screen.run():  # Если игрок закрыл стартовый экран
+            self.running = False
+            return
+
+        level_number = 1 
+        while self.running and level_number <= 9:  # Максимум 9 уровней
+            # Показ переходного экрана
+            hell_screen = HellScreen(self.display_surface, level_number)
+            if not hell_screen.run():  # Если игрок закрыл переходный экран
+                break
+
+            # Загрузка уровня
+            level_obj = Level(self.display_surface, level_number)
+
+            level_running = True  # Флаг работы уровня
+            while level_running:
+                # Обработка событий
+                for event in pg.event.get():
+                    if event.type == pg.QUIT:
+                        self.running = False
+                        level_running = False
+                        break
+                    if event.type == pg.KEYDOWN and event.key == pg.K_TAB:  # Переход на следующий уровень
+                        level_number += 1
+                        level_running = False
+                        break
+
+                # Отображение уровня
+                self.display_surface.fill((0, 0, 0))  # Очистка экрана
+                level_obj.draw()  # Отрисовка уровня
+                pg.display.update()
+                self.clock.tick(60)
+
+                # Проверка завершения игры
+                if level_number > 9:
                     self.running = False
-            self.display_surface.fill((30, 30, 30))
-            pg.display.update()
-            self.clock.tick(60)
+                    level_running = False
+                    break
+
+        pg.quit()
+
 
 if __name__ == "__main__":
     game = Game()
-    start_screen = StartScreen(game.display_surface)
-
-    if start_screen.run():
-        game.run()
-
-    pg.quit()
+    game.run()
