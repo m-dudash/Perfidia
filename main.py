@@ -46,7 +46,16 @@ class Game:
                         level_number += 1
                         level_running = False
                         break
+                
 
+                teleport_triggered = level_obj.update(dt)
+                if teleport_triggered:
+                    level_number += 1
+                    level_running = False
+                    # Выходим из while, загружаем след. уровень
+                    break
+                
+                
                 # Обновление и отрисовка уровня
                 self.display_surface.fill((0, 0, 0))  # Очистка экрана
                 level_obj.update(dt)

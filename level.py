@@ -58,6 +58,8 @@ class Level:
             ]
         # Note: картинки могут быть большими; смотрите, чтобы 
         # background_layer покрывало весь экран (или тильте их).
+        
+        self.teleport_rect = self.create_portal()  #создание портала
 
     def load_tiles(self):
         for layer in self.tmx_data.layers:
@@ -77,6 +79,22 @@ class Level:
             if obj.name == "spawnpoint":
                 return Player((obj.x - 32, obj.y - 64))
         return Player((200,200))
+    
+    def create_portal(self):
+        """
+        Сканируем объекты Tiled. Если найдём obj.name=='teleport', 
+        считаем, что это прямоугольник (type='zone'), берём x,y,w,h.
+        Создаём pg.Rect, храним в self.teleport_rect.
+        Если не найдём — None.
+        """
+        for obj in self.tmx_data.objects:
+            if obj.name == "teleport":
+                # x,y,width,height
+                # В Tiled x,y — координата левого верхнего угла,
+                # w,h — ширина/высота
+                rect = pg.Rect(obj.x, obj.y, obj.width, obj.height)
+                return rect
+        return None
 
     def check_collision(self, rect):
         for tile in self.collision_tiles:
@@ -87,7 +105,15 @@ class Level:
     def update(self, dt):
         if self.player:
             self.player.update(dt, self)
+            # Проверка, не пересеклись ли с teleport_rect
+            if self.teleport_rect:
+                if self.teleport_rect.colliderect(self.player.hitbox):
+                    # сообщаем "переход на след. уровень"
+                    return True  # значит "переход"
         self.update_camera_x()
+
+        return False  # остаться на том же уровне
+
 
     def update_camera_x(self):
         if not self.player:
