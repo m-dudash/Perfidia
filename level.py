@@ -41,7 +41,7 @@ class Level:
 
         # Камера/Зум
         self.zoom_factor = 2.3
-        self.vertical_offset = -250
+        self.vertical_offset = -20
         self.virtual_screen_w = int(SCREEN_WIDTH / self.zoom_factor)
         self.virtual_screen_h = int(SCREEN_HEIGHT / self.zoom_factor)
         self.camera_x = 0
