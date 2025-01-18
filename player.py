@@ -9,7 +9,8 @@ class Player(pg.sprite.Sprite):
         self.walk_frames = [pg.image.load(f'assets/player/walk/tile{i}.png').convert_alpha() for i in range(8)]
         self.jump_frames = [pg.image.load(f'assets/player/jump/tile{i}.png').convert_alpha() for i in range(4)]
         self.fall_frames = [pg.image.load(f'assets/player/fall/tile{i}.png').convert_alpha() for i in range(4)]
-
+        self.run_frames = [pg.image.load(f'assets/player/run/tile{i}.png').convert_alpha() for i in range(8)]
+        
         # Начальный кадр
         self.frame_index = 0
         self.image = self.idle_frames[self.frame_index]
@@ -24,7 +25,8 @@ class Player(pg.sprite.Sprite):
 
         # Физика
         self.velocity = pg.Vector2(0, 0)
-        self.speed_x = 100
+        self.walk_speed = 100      # обычная скорость
+        self.run_speed = 180       # скорость при беге
         self.jump_speed = -270
         self.gravity = 800
         self.on_ground = False
@@ -43,15 +45,21 @@ class Player(pg.sprite.Sprite):
     def handle_input(self, dt):
         keys = pg.key.get_pressed()
 
-        # Горизонталь
-        if keys[pg.K_LEFT]:
-            self.velocity.x = -self.speed_x
+        self.running = (keys[pg.K_LSHIFT] or keys[pg.K_RSHIFT])
+
+        if keys[pg.K_a]:
+            speed_x = self.run_speed if self.running else self.walk_speed
+            self.velocity.x = -speed_x
             self.facing_right = False
-        elif keys[pg.K_RIGHT]:
-            self.velocity.x = self.speed_x
+
+        elif keys[pg.K_d]:
+            speed_x = self.run_speed if self.running else self.walk_speed
+            self.velocity.x = speed_x
             self.facing_right = True
+
         else:
             self.velocity.x = 0
+
 
         # Прыжок
         if keys[pg.K_SPACE] and self.on_ground:
@@ -63,22 +71,23 @@ class Player(pg.sprite.Sprite):
             self.velocity.y += self.gravity * dt
 
     def get_state(self):
-        """
-        Определяем текущее состояние (idle, walk, jump, fall).
-        Отключаем «микроскопические» значения velocity.y.
-        """
+        # Если стоим на земле
         if self.on_ground:
             if abs(self.velocity.x) > 0:
-                return 'walk'
+                # Проверяем, бежим ли
+                if self.running:
+                    return 'run'  # <-- Новое состояние
+                else:
+                    return 'walk'
             else:
                 return 'idle'
         else:
             # В воздухе
-            # Если скорость < -1 => jump, иначе fall
             if self.velocity.y < -1:
                 return 'jump'
             else:
                 return 'fall'
+
 
     def animate(self, dt):
         self.animation_timer += dt
@@ -94,6 +103,8 @@ class Player(pg.sprite.Sprite):
             frames = self.idle_frames
         elif self.state == 'walk':
             frames = self.walk_frames
+        elif self.state == 'run':
+            frames = self.run_frames
         elif self.state == 'jump':
             frames = self.jump_frames
         else:  # fall
