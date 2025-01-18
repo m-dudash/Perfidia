@@ -24,8 +24,8 @@ class Player(pg.sprite.Sprite):
 
         # Физика
         self.velocity = pg.Vector2(0, 0)
-        self.speed_x = 200
-        self.jump_speed = -400
+        self.speed_x = 100
+        self.jump_speed = -270
         self.gravity = 800
         self.on_ground = False
         # Исходные спрайты (налево). Если True => flip вправо.
@@ -112,8 +112,8 @@ class Player(pg.sprite.Sprite):
             flipped = pg.transform.flip(self.image, True, False)
             self.image = flipped
 
-    def check_collision(self, level):
-        return level.check_collision(self.hitbox)
+    def check_collision(self, level):   #True / False
+        return level.check_collision(self.hitbox) 
 
     def horizontal_movement(self, dt, level):
         dx = self.velocity.x * dt
