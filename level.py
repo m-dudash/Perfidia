@@ -2,6 +2,7 @@ import pygame as pg
 from pytmx.util_pygame import load_pygame
 from player import Player
 from enemy import Enemy
+from fire import Fire
 
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
@@ -21,6 +22,7 @@ class Level:
         # Группы спрайтов для тайлов
         self.base_sprites = pg.sprite.Group()
         self.decor_sprites = pg.sprite.Group()
+        self.fire_sprites = pg.sprite.Group()
         self.collision_tiles = []
         
         self.enemies = []  # список врагов
@@ -32,6 +34,7 @@ class Level:
         self.level_height = self.tmx_data.height * TILE_SIZE
 
         self.load_tiles()
+        self.load_fire()
         self.player = self.create_player()
         self.spawn_enemies()
         
@@ -79,6 +82,21 @@ class Level:
                         self.collision_tiles.append(t)
                     elif layer.name == "Decor":
                         Tile(pos, surf, self.decor_sprites)
+    
+    def load_fire(self):
+        """
+        Находим объекты огня на слое Objects и добавляем их.
+        """
+        for obj in self.tmx_data.objects:
+            if obj.name in ['d_fire', 'r_fire', 'b_fire']:
+                fire = Fire(
+                    pos=(obj.x, obj.y),  # Координаты точки
+                    fire_type=obj.name,  # Тип огня
+                    group=self.fire_sprites,
+                    scale=2.0,           # Увеличиваем размер огня
+                    animation_speed=0.15 # Замедляем анимацию
+                )
+
 
     def create_player(self):
         for obj in self.tmx_data.objects:
@@ -123,6 +141,7 @@ class Level:
     def update(self, dt):
         if self.player:
             self.player.update(dt, self)
+            self.fire_sprites.update(dt)
             # Проверка, не пересеклись ли с teleport_rect
             if self.teleport_rect:
                 if self.teleport_rect.colliderect(self.player.hitbox):
@@ -230,6 +249,9 @@ class Level:
         # Decor
         for tile in self.decor_sprites:
             draw_off(tile.image, tile.rect.x, tile.rect.y)
+        # Fire
+        for fire in self.fire_sprites:
+            draw_off(fire.image, fire.rect.x, fire.rect.y)
         # Player
         if self.player:
             draw_off(self.player.image, self.player.rect.x, self.player.rect.y)
