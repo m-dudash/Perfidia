@@ -9,7 +9,7 @@ class HellScreen:
         self.image = pg.image.load(f"assets/hells/hell_{self.level_number}.png").convert_alpha()
         self.fade_in = True
         self.alpha = 0
-        self.fade_speed = 5  # Скорость анимации
+        self.fade_speed = 23  # Скорость анимации
 
     def run(self):
         """Анимация переходного экрана."""
@@ -28,7 +28,7 @@ class HellScreen:
                 if self.alpha >= 255:
                     self.alpha = 255
                     self.fade_in = False
-                    pg.time.delay(1400)
+                    pg.time.delay(1)
             else:
                 self.alpha -= self.fade_speed
                 if self.alpha <= 0:

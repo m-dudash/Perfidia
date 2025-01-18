@@ -20,7 +20,7 @@ class Game:
             self.running = False
             return
 
-        level_number = 1 
+        level_number = 1
         while self.running and level_number <= 9:  # Максимум 9 уровней
             # Показ переходного экрана
             hell_screen = HellScreen(self.display_surface, level_number)
@@ -32,6 +32,10 @@ class Game:
 
             level_running = True  # Флаг работы уровня
             while level_running:
+                # Расчет времени между кадрами
+                dt = self.clock.tick(60) / 1000
+                if dt > 0.03:
+                    dt = 0.03
                 # Обработка событий
                 for event in pg.event.get():
                     if event.type == pg.QUIT:
@@ -43,11 +47,11 @@ class Game:
                         level_running = False
                         break
 
-                # Отображение уровня
+                # Обновление и отрисовка уровня
                 self.display_surface.fill((0, 0, 0))  # Очистка экрана
-                level_obj.draw()  # Отрисовка уровня
+                level_obj.update(dt)
+                level_obj.draw()
                 pg.display.update()
-                self.clock.tick(60)
 
                 # Проверка завершения игры
                 if level_number > 9:
