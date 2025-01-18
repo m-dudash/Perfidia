@@ -1,6 +1,7 @@
 import pygame as pg
 from pytmx.util_pygame import load_pygame
 from player import Player
+from enemy import Enemy
 
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
@@ -21,6 +22,9 @@ class Level:
         self.base_sprites = pg.sprite.Group()
         self.decor_sprites = pg.sprite.Group()
         self.collision_tiles = []
+        
+        self.enemies = []  # список врагов
+        
 
         # Загружаем TMX
         self.tmx_data = load_pygame(f"assets/map/level{level_number}.tmx")
@@ -29,6 +33,8 @@ class Level:
 
         self.load_tiles()
         self.player = self.create_player()
+        self.spawn_enemies()
+        
 
         # Камера/Зум
         self.zoom_factor = 2.3
@@ -80,6 +86,18 @@ class Level:
                 return Player((obj.x - 32, obj.y - 64))
         return Player((200,200))
     
+    def spawn_enemies(self):
+        """
+        Ищем объекты name='enemy'. Для каждого создаём Enemy,
+        передаём ему self.collision_tiles (чтобы он не проходил сквозь пол).
+        """
+        for obj in self.tmx_data.objects:
+            if obj.name == "enemy":
+                # pos = (obj.x, obj.y - 32)  # например, немного выше
+                pos = (obj.x-32, obj.y-64)
+                enemy = Enemy(pos, self.collision_tiles)
+                self.enemies.append(enemy)
+    
     def create_portal(self):
         """
         Сканируем объекты Tiled. Если найдём obj.name=='teleport', 
@@ -110,6 +128,11 @@ class Level:
                 if self.teleport_rect.colliderect(self.player.hitbox):
                     # сообщаем "переход на след. уровень"
                     return True  # значит "переход"
+                
+        for e in self.enemies:
+            # Передаём player, чтобы враг мог узнать дистанцию
+            e.update(dt, self.player)
+            
         self.update_camera_x()
 
         return False  # остаться на том же уровне
@@ -210,3 +233,6 @@ class Level:
         # Player
         if self.player:
             draw_off(self.player.image, self.player.rect.x, self.player.rect.y)
+        # Враги
+        for e in self.enemies:
+            draw_off(e.image, e.rect.x, e.rect.y)
