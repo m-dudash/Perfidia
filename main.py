@@ -14,6 +14,7 @@ class Game:
 
     def run(self):
         
+        
         """Основной игровой цикл."""
         # Отображение стартового экрана
         start_screen = StartScreen(self.display_surface)
