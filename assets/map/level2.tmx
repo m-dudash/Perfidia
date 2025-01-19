@@ -3,7 +3,22 @@
  <tileset firstgid="1" name="tileset1" tilewidth="32" tileheight="32" tilecount="153" columns="17">
   <image source="img/tileset1.png" width="544" height="288"/>
  </tileset>
- <tileset firstgid="154" source="tileset1.tsx"/>
+ <tileset firstgid="154" name="tileset1" tilewidth="32" tileheight="32" tilecount="153" columns="17">
+  <image source="img/tileset1.png" width="544" height="288"/>
+  <wangsets>
+   <wangset name="Unnamed Set" type="corner" tile="-1">
+    <wangcolor name="" color="#ff0000" tile="-1" probability="1"/>
+    <wangtile tileid="0" wangid="0,1,0,0,0,1,0,1"/>
+    <wangtile tileid="2" wangid="0,1,0,1,0,0,0,1"/>
+    <wangtile tileid="34" wangid="0,0,0,1,0,1,0,1"/>
+    <wangtile tileid="36" wangid="0,1,0,1,0,1,0,0"/>
+    <wangtile tileid="51" wangid="0,1,0,0,0,1,0,1"/>
+    <wangtile tileid="53" wangid="0,1,0,1,0,0,0,1"/>
+    <wangtile tileid="85" wangid="0,0,0,1,0,1,0,1"/>
+    <wangtile tileid="87" wangid="0,1,0,1,0,1,0,0"/>
+   </wangset>
+  </wangsets>
+ </tileset>
  <layer id="1" name="Base" width="150" height="14">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -92,9 +107,6 @@
   <object id="20" name="enemy" type="points" x="1089.33" y="253.333">
    <point/>
   </object>
-  <object id="21" name="enemy" type="points" x="1626.67" y="193.333">
-   <point/>
-  </object>
   <object id="22" name="enemy" type="points" x="1798.67" y="184">
    <point/>
   </object>
@@ -105,9 +117,6 @@
    <point/>
   </object>
   <object id="25" name="enemy" type="points" x="2998.67" y="61.3333">
-   <point/>
-  </object>
-  <object id="26" name="enemy" type="points" x="3212" y="60">
    <point/>
   </object>
   <object id="27" name="enemy" type="points" x="3361.33" y="80">

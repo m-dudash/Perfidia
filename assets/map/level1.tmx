@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="197" height="14" tilewidth="32" tileheight="32" infinite="0" nextlayerid="6" nextobjectid="94">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="197" height="14" tilewidth="32" tileheight="32" infinite="0" nextlayerid="6" nextobjectid="98">
  <tileset firstgid="1" name="tileset1" tilewidth="32" tileheight="32" tilecount="153" columns="17">
   <image source="img/tileset1.png" width="544" height="288"/>
  </tileset>
@@ -47,19 +47,10 @@
    <point/>
   </object>
   <object id="5" name="teleport" type="zone" x="5628" y="383.333" width="102" height="60"/>
-  <object id="7" name="enemy" type="points" x="2477" y="273">
-   <point/>
-  </object>
   <object id="8" name="enemy" type="points" x="2378" y="277">
    <point/>
   </object>
-  <object id="9" name="enemy" type="points" x="2885.33" y="111.333">
-   <point/>
-  </object>
   <object id="10" name="enemy" type="points" x="1597.33" y="162.667">
-   <point/>
-  </object>
-  <object id="11" name="enemy" type="points" x="3782.67" y="164">
    <point/>
   </object>
   <object id="12" name="d_fire" type="points" x="234" y="255">
@@ -75,9 +66,6 @@
    <point/>
   </object>
   <object id="24" name="enemy" type="points" x="1063.33" y="162">
-   <point/>
-  </object>
-  <object id="25" name="enemy" type="points" x="1504" y="154.667">
    <point/>
   </object>
   <object id="26" name="d_fire" type="points" x="2120" y="287.333">
@@ -98,61 +86,16 @@
   <object id="32" name="d_fire" type="points" x="3680.67" y="191.667">
    <point/>
   </object>
-  <object id="33" name="enemy" type="points" x="3845.33" y="157.333">
-   <point/>
-  </object>
   <object id="34" name="enemy" type="points" x="4228" y="160">
-   <point/>
-  </object>
-  <object id="36" name="d_fire" type="points" x="4521" y="286">
-   <point/>
-  </object>
-  <object id="37" name="d_fire" type="points" x="4539" y="287">
-   <point/>
-  </object>
-  <object id="38" name="d_fire" type="points" x="4563" y="287">
    <point/>
   </object>
   <object id="51" name="d_fire" type="points" x="4591" y="288">
    <point/>
   </object>
-  <object id="52" name="d_fire" type="points" x="4615" y="289">
-   <point/>
-  </object>
-  <object id="53" name="d_fire" type="points" x="4633" y="290">
-   <point/>
-  </object>
-  <object id="54" name="d_fire" type="points" x="4657" y="290">
-   <point/>
-  </object>
-  <object id="55" name="d_fire" type="points" x="4690" y="289">
-   <point/>
-  </object>
   <object id="56" name="d_fire" type="points" x="4714" y="290">
    <point/>
   </object>
-  <object id="57" name="d_fire" type="points" x="4732" y="291">
-   <point/>
-  </object>
-  <object id="58" name="d_fire" type="points" x="4756" y="291">
-   <point/>
-  </object>
-  <object id="75" name="d_fire" type="points" x="4782" y="288">
-   <point/>
-  </object>
-  <object id="79" name="d_fire" type="points" x="4782" y="288">
-   <point/>
-  </object>
-  <object id="76" name="d_fire" type="points" x="4806" y="289">
-   <point/>
-  </object>
-  <object id="80" name="d_fire" type="points" x="4806" y="289">
-   <point/>
-  </object>
   <object id="77" name="d_fire" type="points" x="4824" y="290">
-   <point/>
-  </object>
-  <object id="81" name="d_fire" type="points" x="4824" y="290">
    <point/>
   </object>
   <object id="83" name="d_fire" type="points" x="4897" y="256">
@@ -167,19 +110,25 @@
   <object id="87" name="d_fire" type="points" x="5278" y="193.333">
    <point/>
   </object>
-  <object id="88" name="enemy" type="points" x="5008" y="147">
-   <point/>
-  </object>
   <object id="89" name="enemy" type="points" x="5367" y="133">
-   <point/>
-  </object>
-  <object id="90" name="enemy" type="points" x="4611" y="159">
    <point/>
   </object>
   <object id="91" name="enemy" type="points" x="3479" y="85">
    <point/>
   </object>
   <object id="93" name="d_fire" type="points" x="5875" y="286">
+   <point/>
+  </object>
+  <object id="94" name="d_fire" type="points" x="4656" y="289">
+   <point/>
+  </object>
+  <object id="95" name="d_fire" type="points" x="4511" y="285">
+   <point/>
+  </object>
+  <object id="96" name="d_fire" type="points" x="4772" y="289">
+   <point/>
+  </object>
+  <object id="97" name="d_fire" type="points" x="4765" y="192">
    <point/>
   </object>
  </objectgroup>

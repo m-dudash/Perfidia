@@ -52,12 +52,14 @@ class Level:
         # Слои: background_layer, back_layer, middle_layer, front_layer
         # parallax_factor (0.0 => зафиксирован, 1.0 => движется вместе с камерой)
         # Обычно дальний слой движется медленнее (0.1..0.2), ближний быстрее (0.5..0.7).
-        if self.level_number == 1:
+        if self.level_number <= 2 :
             folder = "grey"
+        elif self.level_number <= 4:
+            folder  = "yellow"
+        elif self.level_number <= 6:
+            folder = "red"
         else:
-            # Если есть другие варианты (red, yellow, blue), 
-            # можно switch-case, но пока оставим
-            folder = "grey"
+            folder = "blue"
 
         self.parallax_layers = [
             (pg.image.load(f"assets/background/{folder}/background layer.png").convert_alpha(), 0.1),
