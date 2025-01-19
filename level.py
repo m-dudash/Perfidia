@@ -38,6 +38,8 @@ class Level:
         self.player = self.create_player()
         self.spawn_enemies()
         
+        
+        
 
         # Камера/Зум
         self.zoom_factor = 2.3
