@@ -22,7 +22,7 @@ class Game:
             self.running = False
             return
 
-        level_number = 5
+        level_number = 1
         while self.running and level_number <= 9:  # Максимум 9 уровней
             # Показ переходного экрана
             hell_screen = HellScreen(self.display_surface, level_number)
