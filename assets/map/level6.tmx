@@ -79,7 +79,7 @@
   <object id="13" name="r_fire" type="points" x="1555" y="162">
    <point/>
   </object>
-  <object id="14" name="teleport" type="zone" x="4481" y="385" width="160" height="60"/>
+  <object id="14" name="teleport" type="zone" x="4475" y="354.5" width="160" height="60"/>
   <object id="15" name="enemy" type="points" x="1030" y="158">
    <point/>
   </object>

@@ -31,7 +31,7 @@ class Game:
 
             # Загрузка уровня
             level_obj = Level(self.display_surface, level_number)
-
+    
             level_running = True  # Флаг работы уровня
             while level_running:
                 # Расчет времени между кадрами
