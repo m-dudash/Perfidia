@@ -30,6 +30,8 @@ class Enemy(pg.sprite.Sprite):
         self.frame_index = 0
         self.animation_timer = 0
         self.animation_cooldown = 0.08
+        
+        self.health = random.choice([10,15,5])
 
         # Текущее изображение и прямоугольник
         self.image = self.stand_frames[self.frame_index]
@@ -73,6 +75,12 @@ class Enemy(pg.sprite.Sprite):
          4) Движение, проверка коллизий
          5) Анимация
         """
+        
+        if self.state == 'death':
+            # Только обновляем анимацию смерти, чтобы проиграть кадры
+            self.animate_death(dt)
+            return
+        
         # 1) Проверяем дистанцию
         dist = abs(player.rect.centerx - self.rect.centerx)  # по X
         # или 2D dist = player.rect.center - self.rect.center => length
@@ -121,7 +129,42 @@ class Enemy(pg.sprite.Sprite):
 
         # Анимация
         self.animate(dt)
+        
+    
+    def get_hit(self, damage):
+        """Вызов при попадании удара игрока."""
+        if self.state == 'death':
+            return  # уже умирает, не реагируем
+        
+        self.health -= damage
+        if self.health <= 0:
+            # Запускаем анимацию смерти
+            self.state = 'death'
+            self.frame_index = 0
+            self.animation_timer = 0
+    def animate_death(self, dt):
+           # 1) Проверяем сразу: если уже вышли за кадры — убираем врага
+        if self.frame_index >= len(self.death_frames):
+            self.kill()
+            return
 
+        self.animation_timer += dt
+        self.animation_timer += dt
+        if self.animation_timer >= self.animation_cooldown:
+            self.animation_timer = 0
+            self.frame_index += 1  # переходим к следующему кадру
+            # Проверяем, не вышли ли за предел
+            if self.frame_index >= len(self.death_frames):
+                # Враг уже доиграл анимацию смерти
+                self.kill()  # убираем спрайт из группы
+                return
+
+        # Теперь frame_index гарантированно в диапазоне
+        self.image = self.death_frames[self.frame_index]
+        if self.facing_right:
+            self.image = pg.transform.flip(self.image, True, False)
+
+        
     def animate(self, dt):
         self.animation_timer += dt
 

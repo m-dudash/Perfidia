@@ -10,6 +10,7 @@ class Player(pg.sprite.Sprite):
         self.jump_frames = [pg.image.load(f'assets/player/jump/tile{i}.png').convert_alpha() for i in range(4)]
         self.fall_frames = [pg.image.load(f'assets/player/fall/tile{i}.png').convert_alpha() for i in range(4)]
         self.run_frames = [pg.image.load(f'assets/player/run/tile{i}.png').convert_alpha() for i in range(8)]
+        self.hit_frames  = [pg.image.load(f'assets/player/hit/tile{i}.png').convert_alpha() for i in range(6)]
         
         # Начальный кадр
         self.frame_index = 0
@@ -19,7 +20,6 @@ class Player(pg.sprite.Sprite):
         self.rect = self.image.get_rect(topleft=pos)
 
         # HITBOX — для коллизий (меньше, чем спрайт). 
-        # Подберите размеры под «тело» персонажа.
         self.hitbox = pg.Rect(self.rect.x, self.rect.y, 24, 48)
         self.hitbox.midbottom = self.rect.midbottom
 
@@ -38,7 +38,8 @@ class Player(pg.sprite.Sprite):
         self.frame_index = 0
         self.animation_timer = 0
         self.animation_cooldown = 0.09
-
+        self.attack_frame = 0
+        self.is_attacking = False
         # Ограничим dt
         self.max_dt = 0.03
 
@@ -69,8 +70,26 @@ class Player(pg.sprite.Sprite):
         # Гравитация
         if not self.on_ground:
             self.velocity.y += self.gravity * dt
+            
+        # Удар (ЛКМ)
+        mouse_buttons = pg.mouse.get_pressed(num_buttons=3)
+        left_click = mouse_buttons[0]  # 0 - LMB, 1 - RMB, 2 - MMB
+        if left_click and not self.is_attacking:
+            self.start_attack()
 
+    def start_attack(self):
+        """Переход в состояние 'hit'. Сбрасываем кадры анимации."""
+        self.is_attacking = True
+        self.state = 'hit'
+        self.frame_index = 0
+        self.animation_timer = 0
+
+        
     def get_state(self):
+        
+        if self.is_attacking:
+            return 'hit'
+        
         # Если стоим на земле
         if self.on_ground:
             if abs(self.velocity.x) > 0:
@@ -107,13 +126,25 @@ class Player(pg.sprite.Sprite):
             frames = self.run_frames
         elif self.state == 'jump':
             frames = self.jump_frames
+        elif self.state == 'hit':
+            frames = self.hit_frames
         else:  # fall
             frames = self.fall_frames
 
         # Переключаем кадры
         if self.animation_timer >= self.animation_cooldown:
             self.animation_timer = 0
-            self.frame_index = (self.frame_index + 1) % len(frames)
+            self.frame_index += 1
+
+            # Если вышли за последний кадр в "hit" - завершаем атаку
+            if self.state == 'hit' and self.frame_index >= len(frames):
+                self.is_attacking = False
+                self.state = 'idle'
+                self.frame_index = 0
+
+            # Для других состояний - просто зациклим
+            elif self.frame_index >= len(frames):
+                self.frame_index = 0
 
         # Берём текущий кадр
         self.image = frames[self.frame_index]
@@ -122,6 +153,26 @@ class Player(pg.sprite.Sprite):
         if self.facing_right:
             flipped = pg.transform.flip(self.image, True, False)
             self.image = flipped
+            
+    def do_attack_damage(self, level):
+        """
+        Вызывается на каждом кадре update, если is_attacking=True.
+        Можно сделать так, чтобы урон засчитывался только на определённом кадре удара
+        или всё время, пока идёт 'hit'.
+        
+        Здесь простой вариант: когда state == 'hit' и frame_index == 2 (например),
+        наносим урон всем врагам в зоне.
+        """
+
+        if self.state == 'hit' and self.frame_index == 4:
+            # прямоугольник шириной 40px вперёд от игрока и высотой hitbox'а
+            attack_rect = self.hitbox.copy()
+            attack_rect.width = 40
+                
+            # Перебираем врагов
+            for e in level.enemies:
+                if attack_rect.colliderect(e.hitbox):
+                    e.get_hit(1)  # нанести 1 урона
 
     def check_collision(self, level):   #True / False
         return level.check_collision(self.hitbox) 
@@ -169,24 +220,28 @@ class Player(pg.sprite.Sprite):
             self.hitbox.y -= 1
 
     def update(self, dt, level):
-        # 1) Ограничим dt
-        if dt > self.max_dt:
-            dt = self.max_dt
+            # 1) Ограничим dt
+            if dt > self.max_dt:
+                dt = self.max_dt
 
-        # 2) Инпут
-        self.handle_input(dt)
+            # 2) Инпут
+            self.handle_input(dt)
 
-        # 3) Движение по X -> коллизия
-        self.horizontal_movement(dt, level)
+            # 3) Движение по X
+            self.horizontal_movement(dt, level)
 
-        # 4) Движение по Y -> коллизия
-        self.vertical_movement(dt, level)
+            # 4) Движение по Y
+            self.vertical_movement(dt, level)
 
-        # 5) post_ground_check: проверяем, не висим ли «впритык» над тайлом
-        self.post_ground_check(level)
+            # 5) post_ground_check
+            self.post_ground_check(level)
 
-        # 6) Синхронизируем rect с hitbox
-        self.rect.midbottom = self.hitbox.midbottom
+            # 6) Синхронизируем rect
+            self.rect.midbottom = self.hitbox.midbottom
 
-        # 7) Анимация
-        self.animate(dt)
+            # 7) Нанесение урона, если атакуем
+            if self.is_attacking:
+                self.do_attack_damage(level)
+
+            # 8) Анимация
+            self.animate(dt)
