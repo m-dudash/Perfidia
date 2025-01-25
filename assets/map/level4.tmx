@@ -52,9 +52,6 @@
   <object id="4" name="r_fire" type="points" x="3422.67" y="163.333">
    <point/>
   </object>
-  <object id="5" name="r_fire" type="points" x="4096" y="320">
-   <point/>
-  </object>
   <object id="6" name="r_fire" type="points" x="3008.92" y="191.583">
    <point/>
   </object>

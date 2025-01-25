@@ -29,7 +29,7 @@ class Enemy(pg.sprite.Sprite):
         self.state = 'stand'  # 'stand' / 'walk' / 'hit' / 'death'
         self.frame_index = 0
         self.animation_timer = 0
-        self.animation_cooldown = 0.12
+        self.animation_cooldown = 0.08
 
         # Текущее изображение и прямоугольник
         self.image = self.stand_frames[self.frame_index]
@@ -41,7 +41,7 @@ class Enemy(pg.sprite.Sprite):
 
         # Физика
         self.velocity = pg.Vector2(0,0)
-        self.walk_speed = 70   
+        self.walk_speed = 120   
         self.gravity = 800
         self.on_ground = False
         self.facing_right = True

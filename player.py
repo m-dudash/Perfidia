@@ -25,10 +25,10 @@ class Player(pg.sprite.Sprite):
 
         # Физика
         self.velocity = pg.Vector2(0, 0)
-        self.walk_speed = 100      # обычная скорость
-        self.run_speed = 120       # скорость при беге
-        self.jump_speed = -250
-        self.gravity = 500
+        self.walk_speed = 130      # обычная скорость
+        self.run_speed = 200       # скорость при беге
+        self.jump_speed = -350
+        self.gravity = 1000
         self.on_ground = False
         # Исходные спрайты (налево). Если True => flip вправо.
         self.facing_right = True
@@ -37,7 +37,7 @@ class Player(pg.sprite.Sprite):
         self.state = 'idle'   # idle / walk / jump / fall
         self.frame_index = 0
         self.animation_timer = 0
-        self.animation_cooldown = 0.12
+        self.animation_cooldown = 0.09
 
         # Ограничим dt
         self.max_dt = 0.03

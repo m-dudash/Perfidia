@@ -29,6 +29,8 @@ class Game:
             if not hell_screen.run():  # Если игрок закрыл переходный экран
                 break
 
+
+
             # Загрузка уровня
             level_obj = Level(self.display_surface, level_number)
     
@@ -36,8 +38,8 @@ class Game:
             while level_running:
                 # Расчет времени между кадрами
                 dt = self.clock.tick(60) / 1000
-                if dt > 0.03:
-                    dt = 0.03
+                if dt > 0.3:
+                    dt = 0.3
                 # Обработка событий
                 '''
                 Все исправино. Переходим к следующей цели - враги. На карту я добавил на слое Objects точки enemy типа points где должны спавниться враги. На врагов так же работает притяжение. Они нападают на игрока если он приблизился ближе семи плиток к врагу. Спрайты врагов в assets/enemy/ папки male,female,twisted/ и в каждой tile0.png -
@@ -63,7 +65,6 @@ class Game:
                 
                 # Обновление и отрисовка уровня
                 self.display_surface.fill((0, 0, 0))  # Очистка экрана
-                level_obj.update(dt)
                 level_obj.draw()
                 pg.display.update()
 

@@ -97,7 +97,7 @@ class Level:
                     fire_type=obj.name,  # Тип огня
                     group=self.fire_sprites,
                     scale=2.0,           # Увеличиваем размер огня
-                    animation_speed=0.15 # Замедляем анимацию
+                    animation_speed=0.08 # Замедляем анимацию
                 )
 
 
@@ -205,7 +205,7 @@ class Level:
         else:
             self.surface.blit(self.offscreen, (0,0))
 
-        pg.display.update()
+
 
     def draw_parallax_layer(self, bg_image, factor):
         """
