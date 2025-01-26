@@ -77,7 +77,7 @@
    <point/>
   </object>
   <object id="15" name="teleport" type="zone" x="4476.5" y="391" width="102" height="60"/>
-  <object id="16" name="enemy" type="points" x="833" y="286">
+  <object id="16" name="enemy" type="points" x="794.333" y="247.333">
    <point/>
   </object>
   <object id="17" name="enemy" type="points" x="1472" y="319">

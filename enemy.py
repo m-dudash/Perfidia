@@ -1,5 +1,6 @@
 # enemy.py
 
+import time
 import pygame as pg
 import random
 
@@ -31,7 +32,7 @@ class Enemy(pg.sprite.Sprite):
         self.animation_timer = 0
         self.animation_cooldown = 0.08
         
-        self.health = random.choice([10,15,5])
+        self.health = random.choice([10,15])
 
         # Текущее изображение и прямоугольник
         self.image = self.stand_frames[self.frame_index]
@@ -51,8 +52,13 @@ class Enemy(pg.sprite.Sprite):
         # Коллизия с тайлами (Base)
         self.collision_tiles = collision_tiles
 
-        # Дистанция агро
+        # Дистанция агро и атаки
         self.aggro_range = 224  # 7 тайлов * 32
+        self.attack_range = 25  # Дистанция для атаки
+        self.attack_damage = 8
+        self.attack_cooldown = 1.5  # Враги атакуют каждые 1.5 сек
+        self.last_attack_time = time.time() - self.attack_cooldown
+        self.is_attacking = False  # Флаг текущей атаки
 
     def load_frames(self, folder, count):
         """
@@ -69,23 +75,34 @@ class Enemy(pg.sprite.Sprite):
     def update(self, dt, player):
         """
         Главная логика врага:
-         1) Проверка дистанции до игрока, выбор состояния (stand/walk)
-         2) Установка velocity.x в сторону игрока (если walk)
-         3) Применение гравитации
-         4) Движение, проверка коллизий
-         5) Анимация
+        1) Проверка дистанции до игрока, выбор состояния (stand/walk/attack)
+        2) Установка velocity.x в сторону игрока (если walk)
+        3) Применение гравитации
+        4) Движение, проверка коллизий
+        5) Анимация
         """
         
         if self.state == 'death':
             # Только обновляем анимацию смерти, чтобы проиграть кадры
             self.animate_death(dt)
             return
-        
+
+        if self.is_attacking:
+            # Если враг в процессе атаки, обновляем анимацию атаки
+            self.animate_attack(dt, player)
+            return
+
         # 1) Проверяем дистанцию
         dist = abs(player.rect.centerx - self.rect.centerx)  # по X
-        # или 2D dist = player.rect.center - self.rect.center => length
-        # но пусть упрощённо: если по X < aggro => walk
-        if dist < self.aggro_range:
+        # Можно использовать 2D расстояние:
+        # dist = player.rect.center.distance_to(self.rect.center)
+
+        if dist < self.attack_range:
+            if (time.time() - self.last_attack_time) >= self.attack_cooldown:
+                self.start_attack(player)
+            else:
+                self.state = 'stand'
+        elif dist < self.aggro_range:
             self.state = 'walk'
         else:
             self.state = 'stand'
@@ -108,35 +125,79 @@ class Enemy(pg.sprite.Sprite):
         if not self.on_ground:
             self.velocity.y += self.gravity * dt
 
-        # Горизонталь
+        # 3) Горизонталь
         old_x = self.hitbox.x
         self.hitbox.x += int(self.velocity.x * dt)
-        if self.check_collision():
+        # Проверяем столкновение с тайлами и игроком
+        if self.check_collision([player.hitbox]):
             self.hitbox.x = old_x
 
-        # Вертикаль
+        # 4) Вертикаль
         old_y = self.hitbox.y
         self.hitbox.y += int(self.velocity.y * dt)
         self.on_ground = False
-        if self.check_collision():
+        if self.check_collision([player.hitbox]):
             self.hitbox.y = old_y
             if self.velocity.y > 0:
                 self.on_ground = True
             self.velocity.y = 0
 
-        # Синхронизируем rect
+        # 5) Синхронизируем rect
         self.rect.midbottom = self.hitbox.midbottom
 
-        # Анимация
+        # 6) Анимация
         self.animate(dt)
+
+
         
     
+    
+    def start_attack(self, player):
+        """Запуск атаки на игрока."""
+        self.is_attacking = True
+        self.state = 'attack'
+        self.frame_index = 0
+        self.animation_timer = 0
+        self.last_attack_time = time.time()
+        # Остановить движение во время атаки
+        self.velocity.x = 0
+    def animate_attack(self, dt, player):
+        """Анимация атаки врага."""
+        self.animation_timer += dt
+        if self.animation_timer >= self.animation_cooldown:
+            self.animation_timer = 0
+            self.frame_index += 1
+
+
+            if self.frame_index >= len(self.hit_frames):
+                # Завершаем атаку
+                self.is_attacking = False
+                self.state = 'stand'
+                self.frame_index = 0
+            else:
+                # На определённом кадре атака наносит урон
+                if self.frame_index == 2:
+                    player.get_hit(self.attack_damage)
+                    print(f"Enemy at {self.rect.topleft} dealt {self.attack_damage} damage to Player.")
+
+        # Обновляем изображение только если атака все еще продолжается
+        if self.is_attacking and 0 <= self.frame_index < len(self.hit_frames):
+            self.image = self.hit_frames[self.frame_index]
+            # Флипируем изображение только тогда, когда враг смотрит вправо
+            if self.facing_right:
+                self.image = pg.transform.flip(self.image, True, False)
+
+        
+
+            
+        
     def get_hit(self, damage):
         """Вызов при попадании удара игрока."""
         if self.state == 'death':
             return  # уже умирает, не реагируем
         
         self.health -= damage
+        print(f"ENEMY HP {self.health}")
         if self.health <= 0:
             # Запускаем анимацию смерти
             self.state = 'death'
@@ -148,7 +209,6 @@ class Enemy(pg.sprite.Sprite):
             self.kill()
             return
 
-        self.animation_timer += dt
         self.animation_timer += dt
         if self.animation_timer >= self.animation_cooldown:
             self.animation_timer = 0
@@ -166,6 +226,8 @@ class Enemy(pg.sprite.Sprite):
 
         
     def animate(self, dt):
+        if self.state in ['hit', 'death']:
+            return
         self.animation_timer += dt
 
         # Выбираем список кадров
@@ -197,12 +259,17 @@ class Enemy(pg.sprite.Sprite):
         # Флип
         if self.facing_right:
             self.image = pg.transform.flip(self.image, True, False)
-
-    def check_collision(self):
+    def check_collision(self, additional_rects=[]):
         """
-        Возвращаем True, если hitbox пересекает любой tile.rect из self.collision_tiles.
+        Возвращает True, если hitbox пересекается с любым tile.rect из self.collision_tiles
+        или с любым rect из additional_rects.
         """
         for tile in self.collision_tiles:
             if tile.rect.colliderect(self.hitbox):
                 return True
+        for rect in additional_rects:
+            if rect.colliderect(self.hitbox):
+                return True
         return False
+
+

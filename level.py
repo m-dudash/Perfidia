@@ -25,7 +25,7 @@ class Level:
         self.fire_sprites = pg.sprite.Group()
         self.collision_tiles = []
         
-        self.enemies = []  # список врагов
+        self.enemies = pg.sprite.Group()  # список врагов
         
 
         # Загружаем TMX
@@ -117,7 +117,7 @@ class Level:
                 # pos = (obj.x, obj.y - 32)  # например, немного выше
                 pos = (obj.x-32, obj.y-64)
                 enemy = Enemy(pos, self.collision_tiles)
-                self.enemies.append(enemy)
+                self.enemies.add(enemy)
     
     def create_portal(self):
         """
@@ -151,10 +151,9 @@ class Level:
                     # сообщаем "переход на след. уровень"
                     return True  # значит "переход"
                 
-        for e in self.enemies:
-            # Передаём player, чтобы враг мог узнать дистанцию
-            e.update(dt, self.player)
-            
+        self.enemies.update(dt, self.player)  # Обновляем всех врагов
+        print(len(self.enemies))
+        
         self.update_camera_x()
 
         return False  # остаться на том же уровне

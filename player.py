@@ -11,7 +11,7 @@ class Player(pg.sprite.Sprite):
         self.fall_frames = [pg.image.load(f'assets/player/fall/tile{i}.png').convert_alpha() for i in range(4)]
         self.run_frames = [pg.image.load(f'assets/player/run/tile{i}.png').convert_alpha() for i in range(8)]
         self.hit_frames  = [pg.image.load(f'assets/player/hit/tile{i}.png').convert_alpha() for i in range(6)]
-        
+        self.death_frames = [pg.image.load(f'assets/player/death/tile{i}.png').convert_alpha() for i in range(10)]
         # Начальный кадр
         self.frame_index = 0
         self.image = self.idle_frames[self.frame_index]
@@ -32,7 +32,10 @@ class Player(pg.sprite.Sprite):
         self.on_ground = False
         # Исходные спрайты (налево). Если True => flip вправо.
         self.facing_right = True
-
+        
+        self.health = 100
+        self.damage_done = False  # Флаг для предотвращения многократного нанесения урона
+        self.is_dead = False
         # Анимация
         self.state = 'idle'   # idle / walk / jump / fall
         self.frame_index = 0
@@ -42,8 +45,23 @@ class Player(pg.sprite.Sprite):
         self.is_attacking = False
         # Ограничим dt
         self.max_dt = 0.03
-
+        
+    
+    
+    def get_hit(self, damage):
+        if self.is_dead:
+            return
+        self.health -= damage
+        print(f"PLAYER HP: {self.health}")
+        if self.health <=0:
+            self.is_dead = True
+            self.state = "death"
+            self.velocity.x = 0
+            self.frame_index = 0
+            self.animation_timer = 0
     def handle_input(self, dt):
+        if self.is_dead:
+            return  # Не обрабатываем ввод, если игрок мертв
         keys = pg.key.get_pressed()
 
         self.running = (keys[pg.K_LSHIFT] or keys[pg.K_RSHIFT])
@@ -128,6 +146,8 @@ class Player(pg.sprite.Sprite):
             frames = self.jump_frames
         elif self.state == 'hit':
             frames = self.hit_frames
+        elif self.state == 'death':
+            frames = self.death_frames
         else:  # fall
             frames = self.fall_frames
 
@@ -141,6 +161,9 @@ class Player(pg.sprite.Sprite):
                 self.is_attacking = False
                 self.state = 'idle'
                 self.frame_index = 0
+            elif self.state == 'death' and self.frame_index >= len(frames):
+                self.kill()
+                
 
             # Для других состояний - просто зациклим
             elif self.frame_index >= len(frames):
@@ -153,26 +176,40 @@ class Player(pg.sprite.Sprite):
         if self.facing_right:
             flipped = pg.transform.flip(self.image, True, False)
             self.image = flipped
-            
+       
+         
     def do_attack_damage(self, level):
         """
-        Вызывается на каждом кадре update, если is_attacking=True.
-        Можно сделать так, чтобы урон засчитывался только на определённом кадре удара
-        или всё время, пока идёт 'hit'.
-        
-        Здесь простой вариант: когда state == 'hit' и frame_index == 2 (например),
-        наносим урон всем врагам в зоне.
+        Наносит урон врагам, если игрок атакует.
         """
-
         if self.state == 'hit' and self.frame_index == 4:
-            # прямоугольник шириной 40px вперёд от игрока и высотой hitbox'а
-            attack_rect = self.hitbox.copy()
-            attack_rect.width = 40
-                
-            # Перебираем врагов
-            for e in level.enemies:
-                if attack_rect.colliderect(e.hitbox):
-                    e.get_hit(1)  # нанести 1 урона
+            # Увеличиваем радиус удара игрока
+            attack_width = 25  # Увеличенный радиус удара (ширина)
+            attack_height = self.hitbox.height  # Высота совпадает с высотой хитбокса игрока
+
+            if self.facing_right:
+                # Удар направлен вправо
+                attack_rect = pg.Rect(
+                    self.hitbox.right, 
+                    self.hitbox.top, 
+                    attack_width, 
+                    attack_height
+                )
+            else:
+                # Удар направлен влево
+                attack_rect = pg.Rect(
+                    self.hitbox.left - attack_width, 
+                    self.hitbox.top, 
+                    attack_width, 
+                    attack_height
+                )
+
+            # Проверяем, попадают ли враги в область атаки
+            for enemy in level.enemies:
+                if attack_rect.colliderect(enemy.hitbox):
+                    enemy.get_hit(50)  # Наносим 50 урона
+                    print(f"Player attacked enemy at {enemy.rect.topleft}!")
+
 
     def check_collision(self, level):   #True / False
         return level.check_collision(self.hitbox) 

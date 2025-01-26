@@ -101,7 +101,7 @@
   <object id="18" name="d_fire" type="points" x="4480" y="254.667">
    <point/>
   </object>
-  <object id="19" name="enemy" type="points" x="781.333" y="284">
+  <object id="19" name="enemy" type="points" x="677.333" y="220">
    <point/>
   </object>
   <object id="20" name="enemy" type="points" x="1089.33" y="253.333">
@@ -122,7 +122,7 @@
   <object id="27" name="enemy" type="points" x="3361.33" y="80">
    <point/>
   </object>
-  <object id="29" name="enemy" type="points" x="3989.33" y="244">
+  <object id="29" name="enemy" type="points" x="4131.33" y="218">
    <point/>
   </object>
   <object id="30" name="teleport" type="zone" x="4221" y="383.333" width="102" height="60"/>
