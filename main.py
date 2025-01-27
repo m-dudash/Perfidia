@@ -12,11 +12,26 @@ class Game:
         self.clock = pg.time.Clock()
         self.running = True
 
+    def show_game_over_screen(self):
+        """Отображение экрана Game Over и ожидание выхода."""
+        game_over_image = pg.image.load("assets/game_over.png").convert_alpha()
+        game_over_rect = game_over_image.get_rect(center=(1280 // 2, 720 // 2))
+        
+        self.display_surface.fill((0, 0, 0))
+        self.display_surface.blit(game_over_image, game_over_rect)
+        pg.display.update()
+
+        # Ожидание закрытия игры
+        waiting = True
+        while waiting:
+            for event in pg.event.get():
+                if event.type == pg.QUIT:  # Закрытие игры
+                    waiting = False
+                    self.running = False
+
+
     def run(self):
-        
-        
         """Основной игровой цикл."""
-        # Отображение стартового экрана
         start_screen = StartScreen(self.display_surface)
         if not start_screen.run():  # Если игрок закрыл стартовый экран
             self.running = False
@@ -26,56 +41,45 @@ class Game:
         while self.running and level_number <= 9:  # Максимум 9 уровней
             # Показ переходного экрана
             hell_screen = HellScreen(self.display_surface, level_number)
-            if not hell_screen.run():  # Если игрок закрыл переходный экран
+            if not hell_screen.run():
                 break
 
-
-
             # Загрузка уровня
-            
             level_obj = Level(self.display_surface, level_number)
-    
-            level_running = True  # Флаг работы уровня
+            level_running = True
+
             while level_running:
-                # Расчет времени между кадрами
-                dt = self.clock.tick(60) / 1000
+                dt = self.clock.tick(60) / 1000  # Ограничение FPS и расчёт dt
                 if dt > 0.3:
                     dt = 0.3
-                # Обработка событий
-                '''
-                Все исправино. Переходим к следующей цели - враги. На карту я добавил на слое Objects точки enemy типа points где должны спавниться враги. На врагов так же работает притяжение. Они нападают на игрока если он приблизился ближе семи плиток к врагу. Спрайты врагов в assets/enemy/ папки male,female,twisted/ и в каждой tile0.png -
-                '''
+
                 for event in pg.event.get():
                     if event.type == pg.QUIT:
                         self.running = False
                         level_running = False
                         break
-                    if event.type == pg.KEYDOWN and event.key == pg.K_TAB:  # Переход на следующий уровень
-                        level_number += 1
-                        level_running = False
-                        break
-                
 
-                teleport_triggered = level_obj.update(dt)
-                if teleport_triggered:
+                # Обновление уровня
+                result = level_obj.update(dt)
+
+                if result == "next_level":
                     level_number += 1
                     level_running = False
-                    # Выходим из while, загружаем след. уровень
-                    break
-                
-                
-                # Обновление и отрисовка уровня
-                self.display_surface.fill((0, 0, 0))  # Очистка экрана
+                elif result == "game_over":
+                    self.show_game_over_screen()
+                    self.running = False
+                    level_running = False
+
+                # Отрисовка уровня
+                self.display_surface.fill((0, 0, 0))
                 level_obj.draw()
                 pg.display.update()
 
-                # Проверка завершения игры
-                if level_number > 9:
-                    self.running = False
-                    level_running = False
-                    break
+            if level_number > 9:  # Проверка завершения всех уровней
+                self.running = False
 
         pg.quit()
+
 
 
 if __name__ == "__main__":

@@ -143,20 +143,26 @@ class Level:
 
     def update(self, dt):
         if self.player:
-            self.player.update(dt, self)
+            if self.player.is_dead:
+                # Проверяем, прошло ли 4 секунды с момента смерти
+                if pg.time.get_ticks() - self.player.death_time > 4000:
+                    return "game_over"  # Переход на экран Game Over
+                self.player.update(dt, self)  # Обновляем анимацию смерти
+            else:
+                self.player.update(dt, self)  # Обновляем игрока
+
             self.fire_sprites.update(dt)
-            # Проверка, не пересеклись ли с teleport_rect
-            if self.teleport_rect:
-                if self.teleport_rect.colliderect(self.player.hitbox):
-                    # сообщаем "переход на след. уровень"
-                    return True  # значит "переход"
-                
-        self.enemies.update(dt, self.player)  # Обновляем всех врагов
-        print(len(self.enemies))
-        
+
+            # Проверка перехода на следующий уровень
+            if self.teleport_rect and self.teleport_rect.colliderect(self.player.hitbox):
+                return "next_level"
+
+        self.enemies.update(dt, self.player)  # Обновляем врагов
         self.update_camera_x()
 
-        return False  # остаться на том же уровне
+        return None
+
+
 
 
     def update_camera_x(self):

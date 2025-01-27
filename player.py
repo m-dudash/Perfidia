@@ -33,7 +33,7 @@ class Player(pg.sprite.Sprite):
         # Исходные спрайты (налево). Если True => flip вправо.
         self.facing_right = True
         
-        self.health = 100
+        self.health = 20
         self.damage_done = False  # Флаг для предотвращения многократного нанесения урона
         self.is_dead = False
         # Анимация
@@ -49,16 +49,20 @@ class Player(pg.sprite.Sprite):
     
     
     def get_hit(self, damage):
+        """Обработка получения урона игроком."""
         if self.is_dead:
             return
         self.health -= damage
         print(f"PLAYER HP: {self.health}")
-        if self.health <=0:
+        if self.health <= 0:
             self.is_dead = True
             self.state = "death"
             self.velocity.x = 0
             self.frame_index = 0
             self.animation_timer = 0
+            if not hasattr(self, "death_time"):  # Устанавливаем только один раз
+                self.death_time = pg.time.get_ticks()
+
     def handle_input(self, dt):
         if self.is_dead:
             return  # Не обрабатываем ввод, если игрок мертв
@@ -130,7 +134,7 @@ class Player(pg.sprite.Sprite):
         self.animation_timer += dt
         new_state = self.get_state()
 
-        if new_state != self.state:
+        if self.state != "death" and new_state != self.state:
             self.state = new_state
             self.frame_index = 0
             self.animation_timer = 0
@@ -156,16 +160,11 @@ class Player(pg.sprite.Sprite):
             self.animation_timer = 0
             self.frame_index += 1
 
-            # Если вышли за последний кадр в "hit" - завершаем атаку
-            if self.state == 'hit' and self.frame_index >= len(frames):
-                self.is_attacking = False
-                self.state = 'idle'
-                self.frame_index = 0
-            elif self.state == 'death' and self.frame_index >= len(frames):
-                self.kill()
-                
+            # Если анимация смерти завершилась, игрок остаётся на последнем кадре
+            if self.state == 'death' and self.frame_index >= len(frames):
+                self.frame_index = len(frames) - 1  # Остановимся на последнем кадре
 
-            # Для других состояний - просто зациклим
+            # Для других состояний — зацикливание
             elif self.frame_index >= len(frames):
                 self.frame_index = 0
 
@@ -176,6 +175,7 @@ class Player(pg.sprite.Sprite):
         if self.facing_right:
             flipped = pg.transform.flip(self.image, True, False)
             self.image = flipped
+
        
          
     def do_attack_damage(self, level):

@@ -98,7 +98,7 @@ class Enemy(pg.sprite.Sprite):
         # dist = player.rect.center.distance_to(self.rect.center)
 
         if dist < self.attack_range:
-            if (time.time() - self.last_attack_time) >= self.attack_cooldown:
+            if (time.time() - self.last_attack_time) >= self.attack_cooldown  and player.state != 'death':
                 self.start_attack(player)
             else:
                 self.state = 'stand'
