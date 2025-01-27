@@ -58,6 +58,11 @@ class Game:
                         self.running = False
                         level_running = False
                         break
+                    if event.type == pg.KEYDOWN and event.key == pg.K_TAB:
+                        print("Переключение на следующий уровень (отладка)")
+                        level_number += 1
+                        level_running = False
+                        break
 
                 # Обновление уровня
                 result = level_obj.update(dt)

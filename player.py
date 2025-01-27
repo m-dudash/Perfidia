@@ -49,6 +49,20 @@ class Player(pg.sprite.Sprite):
         
         self.health_bar = HealthBar(self)
         
+        self.last_fire_damage_time = 0
+        
+    def handle_fire_damage(self, fire_sprites):
+        """
+        Проверяет столкновение с огнём и наносит урон каждые 200 мс.
+        """
+        current_time = pg.time.get_ticks()
+
+        # Проверяем столкновение с любым огнём
+        if any(fire.rect.colliderect(self.hitbox) for fire in fire_sprites):
+            # Проверяем, прошло ли 200 мс с последнего урона
+            if current_time - self.last_fire_damage_time >= 1000:
+                self.get_hit(3)  # Наносим 1 урон
+                self.last_fire_damage_time = current_time  # Обновляем таймер
     
     
     def get_hit(self, damage):

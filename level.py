@@ -150,6 +150,7 @@ class Level:
                 self.player.update(dt, self)  # Обновляем анимацию смерти
             else:
                 self.player.update(dt, self)  # Обновляем игрока
+                self.player.handle_fire_damage(self.fire_sprites)
 
             self.fire_sprites.update(dt)
 
