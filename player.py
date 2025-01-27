@@ -1,4 +1,5 @@
 import pygame as pg
+from health_bar import HealthBar
 
 class Player(pg.sprite.Sprite):
     def __init__(self, pos):
@@ -33,7 +34,7 @@ class Player(pg.sprite.Sprite):
         # Исходные спрайты (налево). Если True => flip вправо.
         self.facing_right = True
         
-        self.health = 20
+        self.health = 100
         self.damage_done = False  # Флаг для предотвращения многократного нанесения урона
         self.is_dead = False
         # Анимация
@@ -46,6 +47,8 @@ class Player(pg.sprite.Sprite):
         # Ограничим dt
         self.max_dt = 0.03
         
+        self.health_bar = HealthBar(self)
+        
     
     
     def get_hit(self, damage):
@@ -54,6 +57,7 @@ class Player(pg.sprite.Sprite):
             return
         self.health -= damage
         print(f"PLAYER HP: {self.health}")
+ 
         if self.health <= 0:
             self.is_dead = True
             self.state = "death"
@@ -160,11 +164,17 @@ class Player(pg.sprite.Sprite):
             self.animation_timer = 0
             self.frame_index += 1
 
-            # Если анимация смерти завершилась, игрок остаётся на последнем кадре
+            # Если анимация смерти завершилась, остаёмся на последнем кадре
             if self.state == 'death' and self.frame_index >= len(frames):
-                self.frame_index = len(frames) - 1  # Остановимся на последнем кадре
+                self.frame_index = len(frames) - 1
 
-            # Для других состояний — зацикливание
+            # Если анимация удара завершилась, сбрасываем флаг `is_attacking`
+            elif self.state == 'hit' and self.frame_index >= len(frames):
+                self.is_attacking = False  # Завершаем атаку
+                self.state = 'idle'  # Переход в состояние "idle"
+                self.frame_index = 0
+
+            # Зацикливание для других состояний
             elif self.frame_index >= len(frames):
                 self.frame_index = 0
 
@@ -175,6 +185,7 @@ class Player(pg.sprite.Sprite):
         if self.facing_right:
             flipped = pg.transform.flip(self.image, True, False)
             self.image = flipped
+
 
        
          
@@ -207,7 +218,7 @@ class Player(pg.sprite.Sprite):
             # Проверяем, попадают ли враги в область атаки
             for enemy in level.enemies:
                 if attack_rect.colliderect(enemy.hitbox):
-                    enemy.get_hit(50)  # Наносим 50 урона
+                    enemy.get_hit(1) 
                     print(f"Player attacked enemy at {enemy.rect.topleft}!")
 
 
@@ -215,6 +226,8 @@ class Player(pg.sprite.Sprite):
         return level.check_collision(self.hitbox) 
 
     def horizontal_movement(self, dt, level):
+        if self.is_attacking:
+            return
         dx = self.velocity.x * dt
         old_x = self.hitbox.x
         self.hitbox.x += int(dx)
@@ -257,6 +270,7 @@ class Player(pg.sprite.Sprite):
             self.hitbox.y -= 1
 
     def update(self, dt, level):
+            self.health_bar.update()  # Обновляем хиллбар
             # 1) Ограничим dt
             if dt > self.max_dt:
                 dt = self.max_dt

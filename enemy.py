@@ -32,7 +32,7 @@ class Enemy(pg.sprite.Sprite):
         self.animation_timer = 0
         self.animation_cooldown = 0.08
         
-        self.health = random.choice([10,15])
+        self.health = random.choice([5,12])
 
         # Текущее изображение и прямоугольник
         self.image = self.stand_frames[self.frame_index]

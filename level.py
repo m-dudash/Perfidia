@@ -263,6 +263,10 @@ class Level:
         # Player
         if self.player:
             draw_off(self.player.image, self.player.rect.x, self.player.rect.y)
+            # Отрисовка хиллбара над игроком
+            health_bar_x = self.player.rect.centerx - self.player.health_bar.image.get_width() // 2
+            health_bar_y = self.player.rect.top - 10  # Немного выше игрока
+            draw_off(self.player.health_bar.image, health_bar_x, health_bar_y)
         # Враги
         for e in self.enemies:
             draw_off(e.image, e.rect.x, e.rect.y)
