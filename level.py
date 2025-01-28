@@ -70,6 +70,7 @@ class Level:
             ]
         # Note: картинки могут быть большими; смотрите, чтобы 
         # background_layer покрывало весь экран (или тильте их).
+        self.level_type = folder
         
         self.teleport_rect = self.create_portal()  #создание портала
 

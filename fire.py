@@ -34,7 +34,7 @@ class Fire(pg.sprite.Sprite):
         
         # Создаём уменьшенный damage_rect для нанесения урона   
         damage_width = int(self.rect.width * 0.5)
-        damage_height = int(self.rect.height * 0.2)
+        damage_height = int(self.rect.height * 0.09)
         self.damage_rect = pg.Rect(0, 0, damage_width, damage_height)
         self.damage_rect.center = self.rect.center  # Центрируем damage_rect
 

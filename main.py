@@ -47,6 +47,12 @@ class Game:
             # Загрузка уровня
             level_obj = Level(self.display_surface, level_number)
             level_running = True
+            try:
+                pg.mixer.music.load(f"assets/audio/music/{level_obj.level_type}.wav")
+                pg.mixer.music.play(-1)  # -1 означает бесконечное повторение
+                print("Level music loaded and playing.")
+            except pg.error as e:
+                print(f"Error with: {level_obj.level_type}.wav: {e}")
 
             while level_running:
                 dt = self.clock.tick(60) / 1000  # Ограничение FPS и расчёт dt
