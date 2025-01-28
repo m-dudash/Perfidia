@@ -25,7 +25,23 @@ class Enemy(pg.sprite.Sprite):
         self.walk_frames = self.load_frames(f"assets/enemy/{self.enemy_type}/walk", 8)
         self.hit_frames  = self.load_frames(f"assets/enemy/{self.enemy_type}/hit", 5)
         self.death_frames= self.load_frames(f"assets/enemy/{self.enemy_type}/death", 8)
+        
+        
+        # Загрузка звуковых эффектов
+        try:
+            self.death1 = pg.mixer.Sound(f"assets\\audio\sfx\enemy\die\death1.wav")
+            self.death2 = pg.mixer.Sound(f"assets\\audio\sfx\enemy\die\death2.wav")
+            self.hit1 = pg.mixer.Sound(f"assets\\audio\sfx\enemy\hit\hit1.wav")
+            self.hit2 = pg.mixer.Sound(f"assets\\audio\sfx\enemy\hit\hit2.wav")
+            print("Enemy sound effects loaded successfully.")
+        except pg.error as e:
+            print(f"Error: {e}")
 
+
+        self.death1.set_volume(0.4)
+        self.death2.set_volume(0.4)
+        self.hit1.set_volume(0.4)
+        self.hit2.set_volume(0.4)
         # Начальное состояние
         self.state = 'stand'  # 'stand' / 'walk' / 'hit' / 'death'
         self.frame_index = 0
@@ -59,6 +75,9 @@ class Enemy(pg.sprite.Sprite):
         self.attack_cooldown = 1.5  # Враги атакуют каждые 1.5 сек
         self.last_attack_time = time.time() - self.attack_cooldown
         self.is_attacking = False  # Флаг текущей атаки
+        
+        
+        
 
     def load_frames(self, folder, count):
         """
@@ -155,6 +174,8 @@ class Enemy(pg.sprite.Sprite):
     def start_attack(self, player):
         """Запуск атаки на игрока."""
         self.is_attacking = True
+        sound = random.choice((self.hit1, self.hit2))
+        sound.play()
         self.state = 'attack'
         self.frame_index = 0
         self.animation_timer = 0
@@ -199,6 +220,8 @@ class Enemy(pg.sprite.Sprite):
         self.health -= damage
         print(f"ENEMY HP {self.health}")
         if self.health <= 0:
+            sound = random.choice((self.death1, self.death2))
+            sound.play()
             # Запускаем анимацию смерти
             self.state = 'death'
             self.frame_index = 0
