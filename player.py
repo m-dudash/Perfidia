@@ -1,5 +1,6 @@
 import pygame as pg
 from health_bar import HealthBar
+import random
 
 class Player(pg.sprite.Sprite):
     def __init__(self, pos):
@@ -13,6 +14,26 @@ class Player(pg.sprite.Sprite):
         self.run_frames = [pg.image.load(f'assets/player/run/tile{i}.png').convert_alpha() for i in range(8)]
         self.hit_frames  = [pg.image.load(f'assets/player/hit/tile{i}.png').convert_alpha() for i in range(6)]
         self.death_frames = [pg.image.load(f'assets/player/death/tile{i}.png').convert_alpha() for i in range(10)]
+        
+        # Загрузка звуков
+        try:
+            self.sword1 = pg.mixer.Sound("assets\\audio\sfx\player\sword\Sword_Attack_1.wav")
+            self.sword2 = pg.mixer.Sound("assets\\audio\sfx\player\sword\Sword_Attack_2.wav")
+            self.sword3 = pg.mixer.Sound("assets\\audio\sfx\player\sword\Sword_Attack_3.wav")
+            self.burn_sound = pg.mixer.Sound("assets\\audio\sfx\player\\burn.wav")
+            self.fall_sound = pg.mixer.Sound("assets\\audio\sfx\player\\fall.wav")
+            self.jump_sound = pg.mixer.Sound("assets\\audio\sfx\player\jump.wav")
+            print("Player sound effects loaded successfully.")
+        except pg.error as e:
+            print(f"Error: {e}")
+            
+        
+        self.fall_sound.set_volume(0.3)
+        self.sword1.set_volume(0.5)
+        self.sword2.set_volume(0.5)
+        self.sword3.set_volume(0.5)
+        self.burn_sound.set_volume(0.4)
+        
         # Начальный кадр
         self.frame_index = 0
         self.image = self.idle_frames[self.frame_index]
@@ -62,6 +83,7 @@ class Player(pg.sprite.Sprite):
             # Проверяем, прошло ли 200 мс с последнего урона
             if current_time - self.last_fire_damage_time >= 1000:
                 self.get_hit(3)  # Наносим 1 урон
+                self.burn_sound.play()
                 self.last_fire_damage_time = current_time  # Обновляем таймер
     
     
@@ -78,6 +100,7 @@ class Player(pg.sprite.Sprite):
             self.velocity.x = 0
             self.frame_index = 0
             self.animation_timer = 0
+            self.fall_sound.play()
             if not hasattr(self, "death_time"):  # Устанавливаем только один раз
                 self.death_time = pg.time.get_ticks()
 
@@ -104,6 +127,7 @@ class Player(pg.sprite.Sprite):
 
         # Прыжок
         if keys[pg.K_SPACE] and self.on_ground:
+            self.jump_sound.play()
             self.velocity.y = self.jump_speed
             self.on_ground = False
 
@@ -123,6 +147,8 @@ class Player(pg.sprite.Sprite):
         self.state = 'hit'
         self.frame_index = 0
         self.animation_timer = 0
+        sound = random.choice((self.sword1, self.sword2, self.sword3))
+        sound.play()
 
         
     def get_state(self):
@@ -258,9 +284,11 @@ class Player(pg.sprite.Sprite):
             # Откат
             self.hitbox.y = old_y
             if self.velocity.y > 0:
+                self.fall_sound.play()
                 self.on_ground = True
             self.velocity.y = 0
         else:
+            
             self.on_ground = False
 
     def post_ground_check(self, level):

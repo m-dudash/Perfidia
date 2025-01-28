@@ -33,8 +33,8 @@ class Fire(pg.sprite.Sprite):
         self.rect = self.image.get_rect(midbottom=pos)  # Привязка midbottom к точке
         
         # Создаём уменьшенный damage_rect для нанесения урона   
-        damage_width = int(self.rect.width * 0.5)
-        damage_height = int(self.rect.height * 0.09)
+        damage_width = int(self.rect.width * 0.3)
+        damage_height = int(self.rect.height * 0.08)
         self.damage_rect = pg.Rect(0, 0, damage_width, damage_height)
         self.damage_rect.center = self.rect.center  # Центрируем damage_rect
 

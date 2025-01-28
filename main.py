@@ -7,6 +7,8 @@ from start_screen import StartScreen
 class Game:
     def __init__(self):
         pg.init()
+        pg.mixer.init(frequency=44100, size=-16, channels=2, buffer=512)
+        pg.mixer.music.set_volume(0.5)
         self.display_surface = pg.display.set_mode((1280, 720))
         pg.display.set_caption("Perfidia")
         self.clock = pg.time.Clock()
@@ -61,6 +63,7 @@ class Game:
 
                 for event in pg.event.get():
                     if event.type == pg.QUIT:
+                        pg.mixer.music.stop()
                         self.running = False
                         level_running = False
                         break
@@ -77,6 +80,8 @@ class Game:
                     level_number += 1
                     level_running = False
                 elif result == "game_over":
+                    pg.mixer.music.load(f"assets\\audio\music\Death.wav")
+                    pg.mixer.music.play(0) 
                     self.show_game_over_screen()
                     self.running = False
                     level_running = False
