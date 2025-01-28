@@ -9,6 +9,14 @@ class StartScreen:
         self.frame_index = 0
         self.frame_delay = 70  # миллисекунды между кадрами
         self.last_frame_time = pg.time.get_ticks()
+        
+        # Загрузка и запуск фоновой музыки для стартового экрана
+        try:
+            pg.mixer.music.load("assets/audio/music/Start.wav")
+            pg.mixer.music.play(-1)  # -1 означает бесконечное повторение
+            print("Start screen music loaded and playing.")
+        except pg.error as e:
+            print(f"Error with: Start.wav: {e}")
 
     def load_frames(self, path):
         frames = []
@@ -23,9 +31,11 @@ class StartScreen:
         while self.running:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
+                    pg.mixer.music.stop()  # Остановить музыку при выходе
                     self.running = False
                     return False
                 if event.type == pg.KEYDOWN and event.key == pg.K_RETURN:
+                    pg.mixer.music.stop()  # Остановить музыку при переходе
                     self.running = False
                     return True
 
@@ -39,5 +49,5 @@ class StartScreen:
             self.display_surface.blit(self.frames[self.frame_index], (0, 0))
             pg.display.update()
             self.clock.tick(60)
-
+        pg.mixer.music.stop()
         return False

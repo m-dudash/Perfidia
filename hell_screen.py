@@ -9,16 +9,25 @@ class HellScreen:
         self.image = pg.image.load(f"assets/hells/hell_{self.level_number}.png").convert_alpha()
         self.fade_in = True
         self.alpha = 0
-        self.fade_speed = 6  # Скорость анимации
+        self.fade_speed = 2  # Скорость анимации
+        
+        try:
+            pg.mixer.music.load("assets/audio/music/Transition.wav")
+            pg.mixer.music.play(0)  # -1 означает бесконечное повторение
+            print("Transition music loaded and playing.")
+        except pg.error as e:
+            print(f"Error with: Transition.wav: {e}")
 
     def run(self):
         """Анимация переходного экрана."""
         while self.running:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
+                    pg.mixer.music.stop()
                     self.running = False
                     return False
                 if event.type == pg.KEYDOWN and event.key == pg.K_RETURN:  #пропуск анимации
+                    pg.mixer.music.stop()
                     self.running = False
                     return True
 
@@ -28,7 +37,7 @@ class HellScreen:
                 if self.alpha >= 255:
                     self.alpha = 255
                     self.fade_in = False
-                    pg.time.delay(1000)
+                    pg.time.delay(2000)
             else:
                 self.alpha -= self.fade_speed
                 if self.alpha <= 0:
@@ -42,4 +51,5 @@ class HellScreen:
             pg.display.update()
             self.clock.tick(60)
 
+        pg.mixer.music.stop()
         return True
