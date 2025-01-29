@@ -1,4 +1,3 @@
-# cutscene.py
 import pygame as pg
 import sys
 

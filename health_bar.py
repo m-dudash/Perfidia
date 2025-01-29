@@ -23,14 +23,14 @@ class HealthBar:
         health_tier = (health_percent // 10) * 10  # Округление до ближайшего десятка
         self.image = self.health_bar_images[health_tier]
 
-    def draw(self, surface, camera_x, vertical_offset):
-        """
-        Отрисовывает хиллбар на поверхности.
+    # def draw(self, surface, camera_x, vertical_offset):
+    #     """
+    #     Отрисовывает хиллбар на поверхности.
 
-        :param surface: поверхность для рисования.
-        :param camera_x: позиция камеры по X.
-        :param vertical_offset: вертикальное смещение уровня.
-        """
-        health_bar_x = self.owner.rect.centerx - self.image.get_width() // 2 - camera_x
-        health_bar_y = self.owner.rect.top + self.offset_y + vertical_offset
-        surface.blit(self.image, (health_bar_x, health_bar_y))
+    #     :param surface: поверхность для рисования.
+    #     :param camera_x: позиция камеры по X.
+    #     :param vertical_offset: вертикальное смещение уровня.
+    #     """
+    #     health_bar_x = self.owner.rect.centerx - self.image.get_width() // 2 - camera_x
+    #     health_bar_y = self.owner.rect.top + self.offset_y + vertical_offset
+    #     surface.blit(self.image, (health_bar_x, health_bar_y))
