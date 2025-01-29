@@ -40,7 +40,7 @@
 </data>
  </layer>
  <objectgroup id="3" name="Objects">
-  <object id="1" name="spawnpoint" type="points" x="529" y="207.5">
+  <object id="1" name="spawnpoint" type="points" x="527" y="105">
    <point/>
   </object>
   <object id="4" name="r_fire" type="points" x="307" y="257">
@@ -77,7 +77,7 @@
    <point/>
   </object>
   <object id="15" name="teleport" type="zone" x="4476.5" y="391" width="102" height="60"/>
-  <object id="16" name="enemy" type="points" x="794.333" y="247.333">
+  <object id="16" name="enemy" type="points" x="794" y="286">
    <point/>
   </object>
   <object id="17" name="enemy" type="points" x="1472" y="319">

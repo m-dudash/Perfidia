@@ -40,7 +40,7 @@
 </data>
  </layer>
  <objectgroup id="3" name="Objects">
-  <object id="1" name="spawnpoint" type="points" x="273" y="138.333">
+  <object id="1" name="spawnpoint" type="points" x="270" y="100.333">
    <point/>
   </object>
   <object id="2" name="r_fire" type="points" x="4414" y="96">

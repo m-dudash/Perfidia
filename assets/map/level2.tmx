@@ -56,7 +56,7 @@
 </data>
  </layer>
  <objectgroup id="3" name="Objects">
-  <object id="4" name="spawnpoint" type="points" x="300" y="226">
+  <object id="4" name="spawnpoint" type="points" x="302" y="100">
    <point/>
   </object>
   <object id="5" name="d_fire" type="points" x="178.667" y="256">

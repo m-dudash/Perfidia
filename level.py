@@ -7,6 +7,8 @@ from fire import Fire
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
 TILE_SIZE = 32
+DISTANCE_THRESHOLD = 500  # Пороговое расстояние прогркзки в пикселях
+DISTANCE_THRESHOLD_SQUARED = DISTANCE_THRESHOLD ** 2  # Для оптимизации
 
 class Tile(pg.sprite.Sprite):
     def __init__(self, pos, surf, group):
@@ -159,7 +161,12 @@ class Level:
             if self.teleport_rect and self.teleport_rect.colliderect(self.player.hitbox):
                 return "next_level"
 
-        self.enemies.update(dt, self.player)  # Обновляем врагов
+        player_pos = pg.Vector2(self.player.rect.centerx, self.player.rect.centery)
+        for enemy in self.enemies:
+            enemy_pos = pg.Vector2(enemy.rect.centerx, enemy.rect.centery)
+            distance_squared = (player_pos - enemy_pos).length_squared()
+            if distance_squared <= DISTANCE_THRESHOLD_SQUARED:
+                enemy.update(dt, self.player)  # Обновляем только активных врагов
         self.update_camera_x()
 
         return None
@@ -274,5 +281,9 @@ class Level:
             corruption_bar_y = self.player.rect.top  # Немного выше HealthBar
             draw_off(self.player.corruption_bar.image, corruption_bar_x, corruption_bar_y)
         # Враги
-        for e in self.enemies:
-            draw_off(e.image, e.rect.x, e.rect.y)
+        player_pos = pg.Vector2(self.player.rect.centerx, self.player.rect.centery)
+        for enemy in self.enemies:
+            enemy_pos = pg.Vector2(enemy.rect.centerx, enemy.rect.centery)
+            distance_squared = (player_pos - enemy_pos).length_squared()
+            if distance_squared <= DISTANCE_THRESHOLD_SQUARED:
+                draw_off(enemy.image, enemy.rect.x, enemy.rect.y)
