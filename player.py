@@ -71,7 +71,7 @@ class Player(pg.sprite.Sprite):
         self.max_dt = 0.03
         
         self.health_bar = HealthBar(self)
-        self.corruption_rate = 5  # Например, 5 единиц в секунду
+        self.corruption_rate = 1.5 
         self.corruption_bar = CorruptionBar(self, self.corruption_rate)
         self.last_fire_damage_time = 0
         
@@ -108,6 +108,8 @@ class Player(pg.sprite.Sprite):
                 self.death_time = pg.time.get_ticks()
 
     def handle_input(self, dt):
+        if not self.on_ground:
+            self.velocity.y += self.gravity * dt
         if self.is_dead:
             return  # Не обрабатываем ввод, если игрок мертв
         keys = pg.key.get_pressed()
@@ -135,8 +137,7 @@ class Player(pg.sprite.Sprite):
             self.on_ground = False
 
         # Гравитация
-        if not self.on_ground:
-            self.velocity.y += self.gravity * dt
+        
             
         # Удар (ЛКМ)
         mouse_buttons = pg.mouse.get_pressed(num_buttons=3)

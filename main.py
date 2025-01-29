@@ -6,6 +6,7 @@ from cutscene import Cutscene
 
 class Game:
     
+    
     def __init__(self):
         pg.init()
         pg.mixer.init(frequency=44100, size=-16, channels=2, buffer=512)

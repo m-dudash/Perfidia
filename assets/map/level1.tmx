@@ -104,9 +104,6 @@
   <object id="85" name="enemy" type="points" x="5096" y="153.333">
    <point/>
   </object>
-  <object id="86" name="d_fire" type="points" x="5342.67" y="61">
-   <point/>
-  </object>
   <object id="87" name="d_fire" type="points" x="5278" y="193.333">
    <point/>
   </object>
