@@ -2,7 +2,7 @@ import pygame as pg
 from hell_screen import HellScreen
 from level import Level
 from start_screen import StartScreen
-
+from cutscene import Cutscene
 
 class Game:
     def __init__(self):
@@ -47,6 +47,22 @@ class Game:
                 break
 
             # Загрузка уровня
+            if level_number == 9:
+            
+                pg.mixer.music.stop()
+
+                    # Получаем death_frames из игрока
+                player_death_frames = level_obj.player.death_frames
+
+                # Создаем и запускаем кат-сцену
+                cinematic = Cutscene(
+                    self.display_surface,
+                    player_death_frames,
+                )
+                cinematic.run()
+                
+                self.show_game_over_screen()
+                break
             level_obj = Level(self.display_surface, level_number)
             level_running = True
             try:

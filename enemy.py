@@ -113,8 +113,7 @@ class Enemy(pg.sprite.Sprite):
 
         # 1) Проверяем дистанцию
         dist = abs(player.rect.centerx - self.rect.centerx)  # по X
-        # Можно использовать 2D расстояние:
-        # dist = player.rect.center.distance_to(self.rect.center)
+
 
         if dist < self.attack_range:
             if (time.time() - self.last_attack_time) >= self.attack_cooldown  and player.state != 'death':
