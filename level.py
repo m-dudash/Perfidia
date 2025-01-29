@@ -267,8 +267,12 @@ class Level:
             draw_off(self.player.image, self.player.rect.x, self.player.rect.y)
             # Отрисовка хиллбара над игроком
             health_bar_x = self.player.rect.centerx - self.player.health_bar.image.get_width() // 2
-            health_bar_y = self.player.rect.top - 10  # Немного выше игрока
+            health_bar_y = self.player.rect.top - 20  # Немного выше игрока
             draw_off(self.player.health_bar.image, health_bar_x, health_bar_y)
+            # Отрисовка CorruptionBar над HealthBar
+            corruption_bar_x = self.player.rect.centerx - self.player.corruption_bar.image.get_width() // 2 + 9
+            corruption_bar_y = self.player.rect.top  # Немного выше HealthBar
+            draw_off(self.player.corruption_bar.image, corruption_bar_x, corruption_bar_y)
         # Враги
         for e in self.enemies:
             draw_off(e.image, e.rect.x, e.rect.y)

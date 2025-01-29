@@ -1,6 +1,7 @@
 import pygame as pg
 from health_bar import HealthBar
 import random
+from corruption_bar import CorruptionBar
 
 class Player(pg.sprite.Sprite):
     def __init__(self, pos):
@@ -70,7 +71,8 @@ class Player(pg.sprite.Sprite):
         self.max_dt = 0.03
         
         self.health_bar = HealthBar(self)
-        
+        self.corruption_rate = 5  # Например, 5 единиц в секунду
+        self.corruption_bar = CorruptionBar(self, self.corruption_rate)
         self.last_fire_damage_time = 0
         
     def handle_fire_damage(self, fire_sprites):
@@ -314,6 +316,7 @@ class Player(pg.sprite.Sprite):
 
     def update(self, dt, level):
             self.health_bar.update()  # Обновляем хиллбар
+            self.corruption_bar.update(dt)
             # 1) Ограничим dt
             if dt > self.max_dt:
                 dt = self.max_dt
