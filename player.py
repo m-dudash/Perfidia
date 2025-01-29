@@ -29,6 +29,7 @@ class Player(pg.sprite.Sprite):
             
         
         self.fall_sound.set_volume(0.3)
+        self.jump_sound.set_volume(0.5)
         self.sword1.set_volume(0.5)
         self.sword2.set_volume(0.5)
         self.sword3.set_volume(0.5)

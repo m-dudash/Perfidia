@@ -111,8 +111,10 @@ class Enemy(pg.sprite.Sprite):
             self.animate_attack(dt, player)
             return
 
-        # 1) Проверяем дистанцию
-        dist = abs(player.rect.centerx - self.rect.centerx)  # по X
+        # 1) Проверяем дистанцию (по обоим осям)
+        dx = player.rect.centerx - self.rect.centerx
+        dy = player.rect.centery - self.rect.centery
+        dist = (dx**2 + dy**2) ** 0.5
 
 
         if dist < self.attack_range:
@@ -197,8 +199,25 @@ class Enemy(pg.sprite.Sprite):
             else:
                 # На определённом кадре атака наносит урон
                 if self.frame_index == 2:
-                    player.get_hit(self.attack_damage)
-                    print(f"Enemy at {self.rect.topleft} dealt {self.attack_damage} damage to Player.")
+                    # Определяем область атаки
+                    attack_width = 50  # Ширина области атаки (настраивайте по необходимости)
+                    attack_height = self.hitbox.height  # Высота совпадает с хитбоксом
+
+                    # Создаём attack_rect вокруг врага
+                    # Например, прямоугольник над врагом
+                    attack_rect = pg.Rect(
+                        self.hitbox.x - (attack_width // 2),  # Смещение по X
+                        self.hitbox.y,                      # Смещение по Y
+                        attack_width, 
+                        attack_height
+                    )
+
+                    # Визуализация attack_rect для отладки (можно удалить после проверки)
+                   
+                    # Проверяем пересечение с игроком
+                    if attack_rect.colliderect(player.hitbox):
+                        player.get_hit(self.attack_damage)
+                        print(f"Enemy at {self.rect.topleft} dealt {self.attack_damage} damage to Player.")
 
         # Обновляем изображение только если атака все еще продолжается
         if self.is_attacking and 0 <= self.frame_index < len(self.hit_frames):
