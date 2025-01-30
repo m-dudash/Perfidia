@@ -85,7 +85,7 @@ class Player(pg.sprite.Sprite):
         if any(fire.damage_rect.colliderect(self.hitbox) for fire in fire_sprites):
             # Проверяем, прошло ли 200 мс с последнего урона
             if current_time - self.last_fire_damage_time >= 1000:
-                self.get_hit(3)  # Наносим 1 урон
+                self.get_hit(10) 
                 self.burn_sound.play()
                 self.last_fire_damage_time = current_time  # Обновляем таймер
     
